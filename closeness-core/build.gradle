@@ -1,0 +1,48 @@
+// https://docs.gradle.org/current/userguide/scala_plugin.html
+// https://docs.gradle.org/current/userguide/tutorial_java_projects.html#N103CD
+
+plugins {
+  id 'com.github.maiflai.scalatest' version '0.10'
+  id 'eclipse'
+  id 'java'
+  id 'scala'
+}
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories{
+    mavenCentral()
+    mavenLocal()
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/scala']
+        }
+    }
+    test {
+        scala {
+            srcDirs = ['test/scala']
+        }
+    }
+}
+
+dependencies{
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'org.scala-lang:scala-library:2.11.1'
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.scalatest:scalatest_2.11:2+'
+    testRuntime 'org.pegdown:pegdown:1.1.0'
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    main = 'Main'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
