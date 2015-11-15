@@ -19,13 +19,13 @@ class ClosenessCentralitySpec extends UnitSpec{
     val edges: Set[Edge[Int]] = Set(new Edge(1, 2),new Edge(2, 3),new Edge(3, 4),new Edge(4, 5),new Edge(1, 3),new Edge(3, 6),new Edge(6, 5))
     val closeness = new ClosenessCentrality(edges)
     
-    closeness.from(2) should be (3)
+    closeness.from(2) should be (12)
   }
   
   it should " show score betwen 1 unresolved path" in {
     val edges: Set[Edge[Int]] = Set(new Edge(1, 2),new Edge(2, 3),new Edge(3, 4),new Edge(4, 5),new Edge(1, 3),new Edge(3, 6))
     val closeness = new ClosenessCentrality(edges)
     
-    closeness.from(1) should be (6)
+    closeness.from(1) should be (9)
   }
 }

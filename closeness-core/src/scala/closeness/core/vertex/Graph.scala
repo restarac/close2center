@@ -4,20 +4,41 @@ package closeness.core.vertex
 import scala.collection.immutable.BitSet
 import scala.annotation.tailrec
 import scala.collection.immutable.Set
+import scala.collection.immutable.Map
+import scala.io.Source
 
 //There isnt any node alone...
-class Graph[V <: Number](nodes: Set[Node[V]], edges: Set[Edge[V]]) {
+class Graph[V](nodes: Set[Node[V]], edges: Set[Edge[V]]) {
+  lazy val closeness = new ClosenessCentrality(edges)
+
+  def this() { this(Set.empty[Node[V]], Set.empty[Edge[V]]) }
+  def countNodes(): Int = { nodes.size }
+  def countEdges(): Int = { edges.size }
+
+  def fromFile(fileName: String): Graph[String] = {
+
+    def addLine(graph: Graph[String], line: String): Graph[String] = {
+      val values = line.split(" ")(_)
+      graph.add(values(0), values(1))
+    }
+
+    val f = Source.fromFile(fileName)
+    val graphFromFile = f.getLines().foldLeft(new Graph[String]()) { case (acc, value) => addLine(acc, value) }
+    f.close()
+    graphFromFile
+  }
 
   def add(in: V, out: V): Graph[V] = {
     val nodeIn = Node(out)
     val nodeOut = Node(in)
     new Graph(nodes + (nodeIn, nodeOut), edges + Edge(nodeIn, nodeOut));
   }
-  lazy val closenessCentrality = new ClosenessCentrality(edges)
 
-  def closeness(nodeId: V): Float = {
+  def closenessRanking(): Map[Node[V], Double] = {
+    val nodesList = nodes.toList
+    val closenessResult: List[Double] = nodesList.map { node => 1.0./(closeness.from(node.value)) }
+    nodesList zip closenessResult toMap
     //http://objdig.ufrj.br/60/teses/coppe_m/LeandroQuintanilhaDeFreitas.pdf
-    1 / closenessCentrality.from(nodeId)
   }
 }
 
@@ -31,21 +52,23 @@ protected class ClosenessCentrality[T](edges: Set[Edge[T]]) {
   }
 
   def from(origin: T): Int = {
-    
+    val originNode = Node(origin)
+    this.from(originNode)
+  }
+
+  def from(originNode: Node[T]): Int = {
     def discover(from: Node[T], deepLevel: Int, edgesAlreadyPassed: Set[Node[T]]): Int = {
-      val edgesNotVerified: List[Node[T]] = nodesLinkedOtherNodes getOrElse (from, Set()) diff edgesAlreadyPassed toList;
+      val edgesNotVerified: Set[Node[T]] = nodesLinkedOtherNodes getOrElse (from, Set()) diff edgesAlreadyPassed;
       if (edgesNotVerified.isEmpty) 0
       else {
-        val total = edgesNotVerified
-          .view
-          .foldLeft(0) {
-            case (acc, value) => acc + discover(value, deepLevel + 1, edgesAlreadyPassed ++ edgesNotVerified)
+        val edgesUpdated = edgesAlreadyPassed ++ edgesNotVerified
+        val nextLevel = deepLevel + 1
+        val total = edgesNotVerified.foldLeft(0) {
+            case (acc, value) => acc + discover(value, nextLevel, edgesUpdated)
           }
         (edgesNotVerified.size * deepLevel) + total
       }
     }
-    
-    val originNode = Node(origin)
     discover(originNode, 1, Set(originNode))
   }
 
