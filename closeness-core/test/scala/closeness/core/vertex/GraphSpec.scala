@@ -10,11 +10,10 @@ class GraphSpec extends UnitSpec {
 
   it should " ranking the vertex added before" in {
     val graph = new Graph[Int]().add(1, 2).add(1, 3)
-    val ranking: Map[Node[Int], Double] = graph.closenessRanking
+    val ranking: List[Ranking[Node[Int]]] = graph.closenessRanking
     
-    ranking.get(Node(1)) should be (Some(0.5))
-    ranking.get(Node(2)) should be (Some(0.3333333333333333))
-    ranking.get(Node(3)) should be (Some(0.3333333333333333))
+    ranking(0).position should be (0.5)
+    ranking(1).position should be (0.3333333333333333)
   }
   
   "A Graph from file" should " load all vertex" in {
@@ -27,7 +26,9 @@ class GraphSpec extends UnitSpec {
   it should " ranking nodes" in {
     val graphFromFile = new Graph().fromFile("test/resource/edges.txt");
     //WORKING WITH 1 THREAD TOO SLOW>>>
-    val ranking: Map[Node[String], Double] = graphFromFile.closenessRanking();
-    ranking.get(Node("5")) should be (Some(0.15555))
+//    val ranking: List[Ranking[Node[String]]] = graphFromFile.closenessRanking
+    //WORKING IN PARALLEL TOO HEAVY>>>
+    val ranking: List[Ranking[Node[String]]] = graphFromFile.par().closenessRanking
+    ranking(0).position should be (0.15555)
   }
 }
