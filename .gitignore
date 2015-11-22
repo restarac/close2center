@@ -12,6 +12,7 @@ build/
 lib_managed/
 src_managed/
 project/boot/
+.sbtserver
 project/plugins/project/
 
 # Scala-IDE specific
