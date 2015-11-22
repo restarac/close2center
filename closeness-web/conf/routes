@@ -3,7 +3,8 @@
 # ~~~~
 
 # Home page
-GET    /graph         @controllers.Application.showGraph
-GET    /graph/edges   @controllers.Application.showEdges
-#POST   /graph/edges   @controllers.Application.saveEdges
-GET    /graph/nodes   @controllers.Application.showNodes
+GET    /graph           @controllers.Application.showGraph
+GET    /graph/edges     @controllers.Application.showEdges
+POST   /graph/edges     @controllers.Application.saveEdges
+GET    /graph/nodes     @controllers.Application.showNodes
+GET    /graph/ranking   @controllers.Application.showRanking
