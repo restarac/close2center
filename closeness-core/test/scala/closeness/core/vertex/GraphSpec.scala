@@ -19,16 +19,7 @@ class GraphSpec extends UnitSpec {
   "A Graph from file" should " load all vertex" in {
     val graph = new Graph[Int]()
     val graphFromFile = graph.fromFile("test/resource/edges.txt")
-    graphFromFile.countEdges should be (945)
-    graphFromFile.countNodes should be (100)
-  }
-  
-  it should " ranking nodes" in {
-    val graphFromFile = new Graph().fromFile("test/resource/edges.txt");
-    //WORKING WITH 1 THREAD TOO SLOW>>>
-//    val ranking: List[Ranking[Node[String]]] = graphFromFile.closenessRanking
-    //WORKING IN PARALLEL TOO HEAVY>>>
-    val ranking: List[Ranking[Node[String]]] = graphFromFile.par().closenessRanking
-    ranking(0).position should be (0.15555)
+    graphFromFile.edges.size should be (945)
+    graphFromFile.nodes.size should be (100)
   }
 }
