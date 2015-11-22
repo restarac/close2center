@@ -3,6 +3,8 @@ Closeness REST API
 
 Create the API for rest services using the closeness-core
 
+***Temporary***: This project needs the [core project](https://github.com/restarac/close2center/tree/part-two/closeness-core) on the maven local
+
 # How to configure ScalaIde
 - Install the [SBT V0.13.8](http://www.scala-sbt.org/download.html)
 - run the command `$ sbt eclipse`

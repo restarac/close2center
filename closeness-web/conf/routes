@@ -3,8 +3,7 @@
 # ~~~~
 
 # Home page
-GET      /books                           controllers.Application.listBooks
-POST     /books                           controllers.Application.saveBook
-
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file)
+GET    /graph         @controllers.Application.showGraph
+GET    /graph/edges   @controllers.Application.showEdges
+#POST   /graph/edges   @controllers.Application.saveEdges
+GET    /graph/nodes   @controllers.Application.showNodes
