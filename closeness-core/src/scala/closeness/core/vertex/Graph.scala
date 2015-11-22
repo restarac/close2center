@@ -1,18 +1,23 @@
 
 package closeness.core.vertex
 
-import scala.annotation.tailrec
-import scala.collection.Set
+import scala.annotation.migration
 import scala.collection.Map
+import scala.collection.Set
 import scala.io.Source
 
-//There isnt any node alone...
-class Graph[V](nodes: Set[Node[V]], edges: Set[Edge[V]]) {
+case class Ranking[+T](node: T, position: Double)
+case class Node[+T](value: T)
+case class Edge[+T](nodeIn: Node[T], nodeOut: Node[T]) {
+  def this(in: T, out: T) {
+    this(Node(in), Node(out))
+  }
+}
+
+class Graph[V](val nodes: Set[Node[V]], val edges: Set[Edge[V]]) {
   lazy val closeness = new ClosenessCentrality(edges)
 
   def this() { this(Set.empty[Node[V]], Set.empty[Edge[V]]) }
-  def countNodes(): Int = { nodes.size }
-  def countEdges(): Int = { edges.size }
 
   def fromFile(fileName: String): Graph[String] = {
     def addLine(graph: Graph[String], line: String): Graph[String] = {
@@ -72,18 +77,10 @@ protected class ClosenessCentrality[T](edges: Set[Edge[T]]) {
     else {
       val edgesUpdated = edgesAlreadyPassed ++ edgesNotVerified
       val nextLevel = deepLevel + 1
-      //PARALLEL THIS METHOD TOO...
-      //val total: Int = edgesNotVerified.par.map { case value => discover(value, nextLevel, edgesUpdated) }.sum
-      val total: Int = edgesNotVerified.map { case value => discover(value, nextLevel, edgesUpdated) }.sum
+      val total = edgesNotVerified.foldLeft(0) {
+        case (acc, value) => acc + discover(value, nextLevel, edgesUpdated)
+      }
       (edgesNotVerified.size * deepLevel) + total
     }
-  }
-}
-
-case class Ranking[+T](node: T, position: Double)
-case class Node[+T](value: T)
-case class Edge[+T](nodeIn: Node[T], nodeOut: Node[T]) {
-  def this(in: T, out: T) {
-    this(Node(in), Node(out))
   }
 }
