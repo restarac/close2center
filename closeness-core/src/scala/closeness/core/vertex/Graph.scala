@@ -46,11 +46,11 @@ class Graph[V](val nodes: Set[Node[V]], val edges: Set[Edge[V]]) {
       }
     }
   }
-
+  
   def closenessRanking(): List[Ranking[Node[V]]] = {
-    nodes.map { node => Ranking(node, 1.0./(closeness from node)) }.toList.sortWith(decrescent)
-    //http://objdig.ufrj.br/60/teses/coppe_m/LeandroQuintanilhaDeFreitas.pdf
+    rankingNodes
   }
+  lazy val rankingNodes = nodes.map { node => Ranking(node, 1.0./(closeness from node)) }.toList.sortWith(decrescent)
 }
 
 protected class ClosenessCentrality[T](edges: Set[Edge[T]]) {
